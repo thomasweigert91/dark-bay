@@ -1,0 +1,13 @@
+import { Module } from '@nestjs/common';
+import { OffersService } from './offers.service';
+import { OffersController } from './offers.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Offer } from './entities/offer.entity';
+import { Auction } from 'src/auctions/entities/auction.entity';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([Offer, Auction])],
+  controllers: [OffersController],
+  providers: [OffersService],
+})
+export class OffersModule {}

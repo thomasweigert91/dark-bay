@@ -1,0 +1,2 @@
+--> auctions: id, title, description, startingPrice, endDate (startDate + 3 if no set)
+--> offers: bid, auctionId

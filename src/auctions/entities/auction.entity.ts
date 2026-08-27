@@ -1,0 +1,44 @@
+import { Offer } from '../../offers/entities/offer.entity';
+import {
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  Entity,
+  BeforeInsert,
+  OneToMany,
+} from 'typeorm';
+
+@Entity('auctions')
+export class Auction {
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
+
+  @Column()
+  title!: string;
+
+  @Column()
+  description!: string;
+
+  @Column()
+  startingPrice!: number;
+
+  @Column()
+  sellerId!: string;
+
+  @CreateDateColumn({ type: 'datetime' })
+  startDate!: Date;
+
+  @Column({ type: 'datetime' })
+  endDate!: Date;
+
+  @OneToMany(() => Offer, (offer) => offer.auction)
+  offers!: Offer[];
+
+  @BeforeInsert()
+  setEndDate() {
+    if (!this.endDate) {
+      const baseDate = this.startDate ? new Date(this.startDate) : new Date();
+      this.endDate = new Date(baseDate.getTime() + 3 * 24 * 60 * 60 * 1000);
+    }
+  }
+}
