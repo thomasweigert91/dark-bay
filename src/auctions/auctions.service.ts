@@ -9,96 +9,96 @@ import { Between } from 'typeorm';
 
 @Injectable()
 export class AuctionsService {
-  constructor(
-    @InjectRepository(Auction)
-    private readonly auctionsRepository: Repository<Auction>,
-  ) {}
+	constructor(
+		@InjectRepository(Auction)
+		private readonly auctionsRepository: Repository<Auction>,
+	) { }
 
-  async create(createAuctionDto: CreateAuctionDto) {
-    const auction = this.auctionsRepository.create({
-      ...createAuctionDto,
-      sellerId: '6ccaafe8-c9a0-47de-9a02-106e58dcc2a0',
-    });
+	async create(createAuctionDto: CreateAuctionDto) {
+		const auction = this.auctionsRepository.create({
+			...createAuctionDto,
+			sellerId: '6ccaafe8-c9a0-47de-9a02-106e58dcc2a0',
+		});
 
-    const savedAuction = await this.auctionsRepository.save(auction);
+		const savedAuction = await this.auctionsRepository.save(auction);
 
-    return savedAuction
-  }
-
-  async findAll(query: GetAuctionsQueryDto) {
-
-	const { page = 1, limit = 10, status } = query;
-	const minPrice = query.minPrice;
-	const maxPrice = query.maxPrice;
-  const now = new Date();
-
-  const skip = (page - 1) * limit;
-  const where: FindOptionsWhere<Auction> = {};
-    
-	if (status === AuctionStatus.OPEN) {
-		where.endDate = MoreThan(now);
-	} else if (status === AuctionStatus.CLOSED) {
-		where.endDate = LessThanOrEqual(now);
+		return savedAuction
 	}
 
-	if (minPrice !== undefined && maxPrice !== undefined) {
-		where.currentPrice = Between(minPrice, maxPrice);
-	} else if (minPrice !== undefined){
-		where.currentPrice = MoreThanOrEqual(minPrice);
-	} else if (maxPrice !== undefined) {
-		where.currentPrice = LessThanOrEqual(maxPrice);
-  }
-    
-    const [data, totalItems] = await this.auctionsRepository.findAndCount({
-      where,
-      order: {
-        endDate: "DESC"
-      },
-      take: limit,
-      skip
-    })
+	async findAll(query: GetAuctionsQueryDto) {
 
-    const totalPages = Math.ceil(totalItems / limit)
+		const { page = 1, limit = 10, status } = query;
+		const minPrice = query.minPrice;
+		const maxPrice = query.maxPrice;
+		const now = new Date();
 
-    return {
-      data: data,
-      meta: {
-        totalItems,
-        itemCount: data.length,
-        itemsPerPage: limit,
-        totalPages,
-        currentPage: page
-      }
-    }
-  }
+		const skip = (page - 1) * limit;
+		const where: FindOptionsWhere<Auction> = {};
 
-  async findOne(id: string) {
-    return await this.auctionsRepository.findOne({
-      where: { id },
-      relations: {
-        offers: true,
-      },
-    });
-  }
+		if (status === AuctionStatus.OPEN) {
+			where.endDate = MoreThan(now);
+		} else if (status === AuctionStatus.CLOSED) {
+			where.endDate = LessThanOrEqual(now);
+		}
 
-  async update(id: string, updateAuctionDto: UpdateAuctionDto) {
-    const auction = await this.auctionsRepository.preload({
-      id,
-      ...updateAuctionDto,
-    });
-    if (!auction) {
-      throw new NotFoundException(`Auction #${id} not found`);
-    }
-    return await this.auctionsRepository.save(auction);
-  }
+		if (minPrice !== undefined && maxPrice !== undefined) {
+			where.currentPrice = Between(minPrice, maxPrice);
+		} else if (minPrice !== undefined) {
+			where.currentPrice = MoreThanOrEqual(minPrice);
+		} else if (maxPrice !== undefined) {
+			where.currentPrice = LessThanOrEqual(maxPrice);
+		}
 
-  async remove(id: string) {
-    const removed = await this.auctionsRepository.delete({ id });
+		const [data, totalItems] = await this.auctionsRepository.findAndCount({
+			where,
+			order: {
+				endDate: "DESC"
+			},
+			take: limit,
+			skip
+		})
 
-    if (removed.affected == 0) {
-      throw new NotFoundException('Auction not found');
-    }
+		const totalPages = Math.ceil(totalItems / limit)
 
-    return removed;
-  }
+		return {
+			data: data,
+			meta: {
+				totalItems,
+				itemCount: data.length,
+				itemsPerPage: limit,
+				totalPages,
+				currentPage: page
+			}
+		}
+	}
+
+	async findOne(id: string) {
+		return await this.auctionsRepository.findOne({
+			where: { id },
+			relations: {
+				offers: true,
+			},
+		});
+	}
+
+	async update(id: string, updateAuctionDto: UpdateAuctionDto) {
+		const auction = await this.auctionsRepository.preload({
+			id,
+			...updateAuctionDto,
+		});
+		if (!auction) {
+			throw new NotFoundException(`Auction #${id} not found`);
+		}
+		return await this.auctionsRepository.save(auction);
+	}
+
+	async remove(id: string) {
+		const removed = await this.auctionsRepository.delete({ id });
+
+		if (removed.affected == 0) {
+			throw new NotFoundException('Auction not found');
+		}
+
+		return removed;
+	}
 }
