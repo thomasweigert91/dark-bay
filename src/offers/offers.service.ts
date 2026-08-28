@@ -36,10 +36,9 @@ export class OffersService {
       order: { offer: 'DESC' },
     });
 
-    console.log(highestOffer);
-    // if (highestOffer && highestOffer.offer <= createOfferDto.offer) {
-    //   throw new ConflictException('The bid should be greater');
-    // }
+    if (highestOffer && highestOffer.offer >= createOfferDto.offer) {
+      throw new ConflictException('The bid should be greater');
+    }
 
     const offer = this.offerRepository.create({ auctionId, ...createOfferDto });
 
