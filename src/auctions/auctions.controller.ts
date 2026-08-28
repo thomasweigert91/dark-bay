@@ -24,7 +24,6 @@ import { CurrentUser } from 'src/auth/current-user.decorator';
 @Controller('auctions')
 export class AuctionsController {
   constructor(private readonly auctionsService: AuctionsService) {}
-
   @SerializeOptions({ type: AuctionResponseDto })
   @UseGuards(AuthGuard)
   @Post()

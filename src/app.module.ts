@@ -8,15 +8,18 @@ import { Auction } from './auctions/entities/auction.entity';
 import { Offer } from './offers/entities/offer.entity';
 import { User } from './users/entities/user.entity';
 import { Middleware } from './middlewares/middleware';
+import { Watchlist } from './watchlists/entities/watchlist.entity';
+import { WatchlistsModule } from './watchlists/watchlists.module';
 
 @Module({
   imports: [
     AuctionsModule,
     OffersModule,
+    WatchlistsModule,
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
       database: 'data/dark-bay.sqlite',
-      entities: [Auction, Offer, User],
+      entities: [Auction, Offer, User, Watchlist],
       synchronize: true,
     }),
   ],
