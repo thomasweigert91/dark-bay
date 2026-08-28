@@ -8,11 +8,14 @@ import {
   Delete,
   SerializeOptions,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { AuctionsService } from './auctions.service';
 import { CreateAuctionDto } from './dto/create-auction.dto';
 import { UpdateAuctionDto } from './dto/update-auction.dto';
 import { AuctionResponseDto } from './dto/auction-response-dto';
+import { GetAuctionsQueryDto } from './dto/get-auctions-query.dto';
+import { PaginatedAuctionResponseDto } from './dto/paginated-auction-response.dto';
 
 @Controller('auctions')
 export class AuctionsController {
@@ -24,10 +27,10 @@ export class AuctionsController {
     return this.auctionsService.create(createAuctionDto);
   }
 
-  @SerializeOptions({ type: AuctionResponseDto })
+  @SerializeOptions({ type: PaginatedAuctionResponseDto })
   @Get()
-  findAll() {
-    return this.auctionsService.findAll();
+  findAll(@Query() query: GetAuctionsQueryDto) {
+    return this.auctionsService.findAll(query);
   }
 
   @SerializeOptions({ type: AuctionResponseDto })
@@ -48,3 +51,4 @@ export class AuctionsController {
     return this.auctionsService.remove(id);
   }
 }
+

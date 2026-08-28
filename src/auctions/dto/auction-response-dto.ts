@@ -9,7 +9,9 @@ export class AuctionResponseDto {
   @Expose()
   description!: string;
   @Expose()
-  startingPrice!: string;
+  startingPrice!: number;
+  @Expose()
+  currentPrice!: number;
   @Expose()
   sellerId!: string;
   @Expose()

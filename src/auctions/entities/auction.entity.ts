@@ -22,6 +22,9 @@ export class Auction {
   @Column()
   startingPrice!: number;
 
+  @Column({ nullable: true })
+  currentPrice!: number;
+
   @Column()
   sellerId!: string;
 
@@ -41,4 +44,11 @@ export class Auction {
       this.endDate = new Date(baseDate.getTime() + 3 * 24 * 60 * 60 * 1000);
     }
   }
+
+  @BeforeInsert()
+initializePrices() {
+  if (this.currentPrice === undefined || this.currentPrice === null) {
+    this.currentPrice = this.startingPrice;
+  }
+}
 }

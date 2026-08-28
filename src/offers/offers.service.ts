@@ -31,18 +31,20 @@ export class OffersService {
       throw new ConflictException('The auction is ended');
     }
 
-    const highestOffer = await this.offerRepository.findOne({
-      where: { auctionId },
-      order: { offer: 'DESC' },
-    });
+    const currentHighest = auction.currentPrice ?? auction.startingPrice
 
-    if (highestOffer && highestOffer.offer >= createOfferDto.offer) {
-      throw new ConflictException('The bid should be greater');
+    if (createOfferDto.offer <= currentHighest) {
+      throw new ConflictException("The bid should be greater than the current price")
     }
 
     const offer = this.offerRepository.create({ auctionId, ...createOfferDto });
 
-    return await this.offerRepository.save(offer);
+    const savedOffer = await this.offerRepository.save(offer);
+    
+    auction.currentPrice = createOfferDto.offer
+    await this.auctionRepository.save(auction)
+
+    return savedOffer
   }
 
   // findAll() {
