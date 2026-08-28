@@ -14,10 +14,10 @@ export class AuctionsService {
 		private readonly auctionsRepository: Repository<Auction>,
 	) { }
 
-	async create(createAuctionDto: CreateAuctionDto) {
+	async create(createAuctionDto: CreateAuctionDto, userId: string) {
 		const auction = this.auctionsRepository.create({
 			...createAuctionDto,
-			sellerId: '6ccaafe8-c9a0-47de-9a02-106e58dcc2a0',
+			sellerId: userId
 		});
 
 		const savedAuction = await this.auctionsRepository.save(auction);
@@ -72,12 +72,12 @@ export class AuctionsService {
 		}
 	}
 
-	async findOne(id: string) {
+	async findOne(auctionId: string) {
 		return await this.auctionsRepository.findOne({
-			where: { id },
+			where: { id: auctionId },
 			relations: {
-				offers: true,
-			},
+				offers: true
+			}
 		});
 	}
 

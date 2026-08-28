@@ -9,6 +9,7 @@ import {
   SerializeOptions,
   HttpCode,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { AuctionsService } from './auctions.service';
 import { CreateAuctionDto } from './dto/create-auction.dto';
@@ -16,15 +17,19 @@ import { UpdateAuctionDto } from './dto/update-auction.dto';
 import { AuctionResponseDto } from './dto/auction-response-dto';
 import { GetAuctionsQueryDto } from './dto/get-auctions-query.dto';
 import { PaginatedAuctionResponseDto } from './dto/paginated-auction-response.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { CurrentUser } from 'src/auth/current-user.decorator';
+
 
 @Controller('auctions')
 export class AuctionsController {
   constructor(private readonly auctionsService: AuctionsService) {}
 
   @SerializeOptions({ type: AuctionResponseDto })
+  @UseGuards(AuthGuard)
   @Post()
-  create(@Body() createAuctionDto: CreateAuctionDto) {
-    return this.auctionsService.create(createAuctionDto);
+  create(@Body() createAuctionDto: CreateAuctionDto, @CurrentUser("id") userId: string) {
+    return this.auctionsService.create(createAuctionDto, userId);
   }
 
   @SerializeOptions({ type: PaginatedAuctionResponseDto })

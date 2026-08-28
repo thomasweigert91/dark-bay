@@ -8,6 +8,7 @@ import {
   OneToMany,
 } from 'typeorm';
 
+
 @Entity('auctions')
 export class Auction {
   @PrimaryGeneratedColumn('uuid')

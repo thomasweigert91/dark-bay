@@ -7,7 +7,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Auction } from './auctions/entities/auction.entity';
 import { Offer } from './offers/entities/offer.entity';
 import { User } from './users/entities/user.entity';
-import { UsersModule } from './users/users.module';
 import { Middleware } from './middlewares/middleware';
 
 @Module({
@@ -20,7 +19,6 @@ import { Middleware } from './middlewares/middleware';
       entities: [Auction, Offer, User],
       synchronize: true,
     }),
-    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

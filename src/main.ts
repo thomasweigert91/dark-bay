@@ -1,27 +1,38 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { toNodeHandler } from 'better-auth/node';
+import { auth } from './auth';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+	const app = await NestFactory.create(AppModule);
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-      transformOptions: {
-        enableImplicitConversion: true,
-      },
-    }),
-  );
+	const expressApp = app.getHttpAdapter().getInstance();
+	expressApp.use('/api/auth', toNodeHandler(auth));
 
-  app.useGlobalInterceptors(
-    new ClassSerializerInterceptor(app.get(Reflector), {
-      excludeExtraneousValues: true,
-    }),
-  );
+	app.useGlobalPipes(
+		new ValidationPipe({
+			whitelist: true,
+			forbidNonWhitelisted: true,
+			transform: true,
+			transformOptions: {
+				enableImplicitConversion: true,
+			},
+		}),
+	);
 
-  await app.listen(process.env.PORT ?? 3000);
+	app.useGlobalInterceptors(
+		new ClassSerializerInterceptor(app.get(Reflector), {
+			excludeExtraneousValues: true,
+		}),
+	);
+
+	const swaggerConfig = new DocumentBuilder().setTitle("Dark Bay").setDescription("Dark Bay marketplace").setVersion("1.0").addBearerAuth().addSecurityRequirements("bearer").build()
+
+	const document = SwaggerModule.createDocument(app, swaggerConfig)
+	SwaggerModule.setup("api", app, document)
+
+	await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

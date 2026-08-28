@@ -18,7 +18,7 @@ export class OffersService {
     private readonly auctionRepository: Repository<Auction>,
   ) {}
 
-  async create(auctionId: string, createOfferDto: CreateOfferDto) {
+  async create(auctionId: string, createOfferDto: CreateOfferDto, userId: string) {
     const auction = await this.auctionRepository.findOneBy({ id: auctionId });
 
     if (!auction) {
@@ -37,7 +37,7 @@ export class OffersService {
       throw new ConflictException("The bid should be greater than the current price")
     }
 
-    const offer = this.offerRepository.create({ auctionId, ...createOfferDto });
+    const offer = this.offerRepository.create({ auctionId, ...createOfferDto, userId });
 
     const savedOffer = await this.offerRepository.save(offer);
     

@@ -1,13 +1,34 @@
-import { Column, PrimaryGeneratedColumn, Entity } from 'typeorm';
+import { Column, PrimaryGeneratedColumn, Entity, PrimaryColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {Auction} from "../../auctions/entities/auction.entity"
+import { Offer } from 'src/offers/entities/offer.entity';
 
-@Entity('users')
+@Entity('user')
 export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id!: string;
+	@PrimaryColumn('text')
+	id!: string;
 
-  @Column()
-  name!: string;
+	@Column()
+	name!: string;
 
-  @Column()
-  hashedPassword!: string;
+	@Column({ unique: true })
+	email!: string;
+
+	@Column({ default: false })
+	emailVerified!: boolean
+
+	@Column({ nullable: true })
+	image!: string;
+
+	@CreateDateColumn({ type: "datetime" })
+	createdAt!: Date;
+
+	@UpdateDateColumn({ type: "datetime" })
+	updatedAt!: Date;
+
+  @OneToMany(() => Auction, (auction) => auction.sellerId)
+  auctions!: Auction[]
+
+  @OneToMany(() => Offer, (offer) => offer.userId)
+  offers!: Auction[]
+
 }
