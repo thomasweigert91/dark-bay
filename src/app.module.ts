@@ -16,11 +16,23 @@ import { WatchlistsModule } from './watchlists/watchlists.module';
     AuctionsModule,
     OffersModule,
     WatchlistsModule,
-    TypeOrmModule.forRoot({
-      type: 'better-sqlite3',
-      database: 'data/dark-bay.sqlite',
-      entities: [Auction, Offer, User, Watchlist],
-      synchronize: true,
+    TypeOrmModule.forRootAsync({
+      useFactory: () => {
+        if (process.env.DATABASE_URL) {
+          return {
+            type: 'postgres',
+            url: process.env.DATABASE_URL,
+            entities: [Auction, Offer, User, Watchlist],
+            synchronize: true,
+          };
+        }
+        return {
+          type: 'better-sqlite3',
+          database: 'data/dark-bay.sqlite',
+          entities: [Auction, Offer, User, Watchlist],
+          synchronize: true,
+        };
+      },
     }),
   ],
   controllers: [AppController],

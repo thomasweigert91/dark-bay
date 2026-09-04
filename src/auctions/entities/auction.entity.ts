@@ -8,7 +8,6 @@ import {
   OneToMany,
 } from 'typeorm';
 
-
 @Entity('auctions')
 export class Auction {
   @PrimaryGeneratedColumn('uuid')
@@ -29,10 +28,10 @@ export class Auction {
   @Column()
   sellerId!: string;
 
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn()
   startDate!: Date;
 
-  @Column({ type: 'datetime' })
+  @Column({ nullable: true })
   endDate!: Date;
 
   @OneToMany(() => Offer, (offer) => offer.auction)
@@ -47,9 +46,9 @@ export class Auction {
   }
 
   @BeforeInsert()
-initializePrices() {
-  if (this.currentPrice === undefined || this.currentPrice === null) {
-    this.currentPrice = this.startingPrice;
+  initializePrices() {
+    if (this.currentPrice === undefined || this.currentPrice === null) {
+      this.currentPrice = this.startingPrice;
+    }
   }
-}
 }

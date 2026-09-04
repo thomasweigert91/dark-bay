@@ -1,34 +1,41 @@
-import { Column, PrimaryGeneratedColumn, Entity, PrimaryColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import {Auction} from "../../auctions/entities/auction.entity"
-import { Offer } from 'src/offers/entities/offer.entity';
+import {
+  Column,
+  PrimaryGeneratedColumn,
+  Entity,
+  PrimaryColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from "typeorm";
+import { Auction } from "../../auctions/entities/auction.entity";
+import { Offer } from "src/offers/entities/offer.entity";
 
-@Entity('user')
+@Entity("user")
 export class User {
-	@PrimaryColumn('text')
-	id!: string;
+  @PrimaryColumn("text")
+  id!: string;
 
-	@Column()
-	name!: string;
+  @Column()
+  name!: string;
 
-	@Column({ unique: true })
-	email!: string;
+  @Column({ unique: true })
+  email!: string;
 
-	@Column({ default: false })
-	emailVerified!: boolean
+  @Column({ default: false })
+  emailVerified!: boolean;
 
-	@Column({ nullable: true })
-	image!: string;
+  @Column({ nullable: true })
+  image!: string;
 
-	@CreateDateColumn({ type: "datetime" })
-	createdAt!: Date;
+  @CreateDateColumn()
+  createdAt!: Date;
 
-	@UpdateDateColumn({ type: "datetime" })
-	updatedAt!: Date;
+  @UpdateDateColumn()
+  updatedAt!: Date;
 
   @OneToMany(() => Auction, (auction) => auction.sellerId)
-  auctions!: Auction[]
+  auctions!: Auction[];
 
   @OneToMany(() => Offer, (offer) => offer.userId)
-  offers!: Auction[]
-
+  offers!: Auction[];
 }
